@@ -9,7 +9,6 @@ amount_played = 0
 
 def guessing_the_num(tries: int) -> None:
     special_num = random.randint(start, end)
-    print(special_num)
     guess = (input(f"Type in your guess for the number({start} - {end}): "))
     counter = 0
 
