@@ -31,7 +31,7 @@ def guessing_the_num(start: int, end: int, tries: int) -> None:
                                             "Would you like to try again?\n"
                                             "Enter your answer here('yes' or 'no'): ")
 
-                if "no" in continuing_question:
+                if "no" in continuing_question.lower():
                     print("End of the game. See you soon!")
                     break
 
@@ -40,14 +40,14 @@ def guessing_the_num(start: int, end: int, tries: int) -> None:
                 continuing_question = input("Would you like to play again?\n"
                                             "Answer with 'yes' or 'no': ")
 
-                if "no" in continuing_question:
+                if "no" in continuing_question.lower():
                     print("End of the game. See you soon!")
                     break
 
             second_question = input("Would you like to change the range?\n"
                                     "Answer with 'yes' or 'no': ")
             is_positive = True
-            if 'yes' in second_question:
+            if 'yes' in second_question.lower():
                 start_1 = int(input("Choose the start of the range for your game(integer): "))
                 end_1 = int(input("Choose the end of the range for your game(integer): "))
             else:
