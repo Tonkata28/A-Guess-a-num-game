@@ -17,12 +17,11 @@ def guessing_the_num(start: int, end: int, tries: int) -> None:
             guess = (input(f"Type in your guess for the number({start} - {end}): "))
             continue
 
-        counter += 1
-
         if guess == "End":
             print("End of the game!")
             break
-
+            
+        counter += 1
         guess = int(guess)
         if (counter == tries and guess != special_num) or guess == special_num:
 
@@ -46,12 +45,16 @@ def guessing_the_num(start: int, end: int, tries: int) -> None:
 
             second_question = input("Would you like to change the range?\n"
                                     "Answer with 'yes' or 'no': ")
-            is_positive = True
+            is_different = True
             if 'yes' in second_question.lower():
                 start_1 = int(input("Choose the start of the range for your game(integer): "))
                 end_1 = int(input("Choose the end of the range for your game(integer): "))
+            elif "no" in second_question.lower():
+                print(f"Ok, continuing with the range{start} - {end})")
+                is_different = False
             else:
-                is_positive = False
+                print("Invalid input. End of the game.")
+                break
 
             if 'yes' in continuing_question.lower():
                 attempts_2 = second_part()
@@ -60,7 +63,7 @@ def guessing_the_num(start: int, end: int, tries: int) -> None:
                     print("End of program")
                     break
 
-                if is_positive:
+                if is_different:
                     guessing_the_num(start=start_1, end=end_1, tries=attempts_2)
                 else:
                     guessing_the_num(start=beginning, end=ending, tries=attempts_2)
