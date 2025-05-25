@@ -50,7 +50,7 @@ def guessing_the_num(start: int, end: int, tries: int) -> None:
                 start_1 = int(input("Choose the start of the range for your game(integer): "))
                 end_1 = int(input("Choose the end of the range for your game(integer): "))
             elif "no" in second_question.lower():
-                print(f"Ok, continuing with the range{start} - {end})")
+                print(f"Ok, continuing with the range({start} - {end})")
                 is_different = False
             else:
                 print("Invalid input. End of the game.")
