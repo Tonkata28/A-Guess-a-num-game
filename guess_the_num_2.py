@@ -6,15 +6,23 @@ ending = int(input("Choose the end of the range for your game(integer): "))
 modes_available = 4
 
 
+def yes_in_question(question: str) -> bool:
+    return "yes" in question.lower()
+
+
+def no_in_question(question: str) -> bool:
+    return "no" in question.lower()
+
+
 def guessing_the_num(start: int, end: int, tries: int) -> None:
     special_num = random.randint(start, end)
-    guess = (input(f"Type in your guess for the number({start} - {end}): "))
     counter = 0
 
     while True:
+        guess = (input(f"Type in your guess for the number({start} - {end}): "))
+
         if not guess.isdigit() and guess != "End":
             print("Invalid input. Try again.")
-            guess = (input(f"Type in your guess for the number({start} - {end}): "))
             continue
 
         if guess == "End":
@@ -23,47 +31,52 @@ def guessing_the_num(start: int, end: int, tries: int) -> None:
             
         counter += 1
         guess = int(guess)
+
         if (counter == tries and guess != special_num) or guess == special_num:
+            start_1 = 0
+            end_1 = 0
+            continuing_question = ""
+            second_question = ""
+            range_changed = True
 
             if counter == tries and guess != special_num:
                 continuing_question = input(f"Your attempts have finished! The number was {special_num}.\n"
                                             "Would you like to try again?\n"
                                             "Enter your answer here('yes' or 'no'): ")
 
-                if "no" in continuing_question.lower():
-                    print("End of the game. See you soon!")
-                    break
-
             if guess == special_num:
                 print(f"Congratulations, you guessed the special number - {special_num}")
                 continuing_question = input("Would you like to play again?\n"
                                             "Answer with 'yes' or 'no': ")
 
-                if "no" in continuing_question.lower():
-                    print("End of the game. See you soon!")
-                    break
-
-            second_question = input("Would you like to change the range?\n"
-                                    "Answer with 'yes' or 'no': ")
-            is_different = True
-            if 'yes' in second_question.lower():
-                start_1 = int(input("Choose the start of the range for your game(integer): "))
-                end_1 = int(input("Choose the end of the range for your game(integer): "))
-            elif "no" in second_question.lower():
-                print(f"Ok, continuing with the range({start} - {end})")
-                is_different = False
-            else:
-                print("Invalid input. End of the game.")
+            if no_in_question(continuing_question):
+                print("End of the game. See you soon!")
                 break
 
-            if 'yes' in continuing_question.lower():
+            elif yes_in_question(continuing_question):
+
+                second_question = input("Would you like to change the range?\n"
+                                        "Answer with 'yes' or 'no': ")
+
+                if yes_in_question(second_question):
+                    start_1 = int(input("Choose the start of the range for your game(integer): "))
+                    end_1 = int(input("Choose the end of the range for your game(integer): "))
+
+                elif no_in_question(second_question):
+                    print(f"Ok, continuing with the range({start} - {end})")
+                    range_changed = False
+
+                else:
+                    print("Invalid input. End of the game.")
+                    break
+
                 attempts_2 = second_part()
 
                 if attempts_2 is None:
                     print("End of program")
                     break
 
-                if is_different:
+                if range_changed:
                     guessing_the_num(start=start_1, end=end_1, tries=attempts_2)
                 else:
                     guessing_the_num(start=beginning, end=ending, tries=attempts_2)
@@ -75,7 +88,6 @@ def guessing_the_num(start: int, end: int, tries: int) -> None:
 
         if guess > end or guess < start:
             print("Invalid input. Try again.")
-            guess = (input(f"Type in your guess for the number({start} - {end}): "))
             continue
 
         elif guess < special_num:
@@ -83,8 +95,6 @@ def guessing_the_num(start: int, end: int, tries: int) -> None:
 
         elif guess > special_num:
             print(f"The number is smaller than your guess. {tries - counter} tries remaining.")
-
-        guess = (input(f"Type in your guess for the number({start} - {end}): "))
 
 
 def second_part() -> int or None:
