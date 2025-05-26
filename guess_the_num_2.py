@@ -1,138 +1,174 @@
 import random
 
-print("\n Type in 'End' instead of a guess if you would like the program to finish manually.")
 
-while True:
+def validating_start_end():
 
-    beginning = int(input("\n Choose the start of the range for your game(integer): "))
-    ending = int(input("\n Choose the end of the range for your game(integer): "))
+    while True:
 
-    if beginning < ending:
-        break
+        beginning_1 = (input("\n Choose the start of the range for your game(integer): "))
+        ending_1 = (input("\n Choose the end of the range for your game(integer): "))
 
-    print("\n Invalid input. Start of range can't be bigger than the end.")
-modes_available = 4
+        if not beginning_1.isdecimal() or not ending_1.isdecimal():
 
+            print("\n Starting and ending must be integers!")
+            continue
 
-def yes_in_question(question: str) -> bool:
-    return "yes" in question.lower().strip()
+        beginning_1, ending_1 = int(beginning_1), int(ending_1)
 
-
-def no_in_question(question: str) -> bool:
-    return "no" in question.lower().strip()
-
-
-def end_in_guess(guess: str) -> bool:
-    return "end" in guess.lower().strip()
+        if beginning_1 < ending_1:
+            return beginning_1, ending_1
+        else:
+            print("\n Invalid input. Start of range can't be bigger than or equal to the end.")
 
 
-def guessing_the_num(start: int, end: int, tries: int) -> None:
+def yes_answer(question: str) -> bool:
+    return "yes" == question.lower().strip()
+
+
+def no_answer(question: str) -> bool:
+    return "no" == question.lower().strip()
+
+
+def end_guess(guess: str) -> bool:
+    return "end" == guess.lower().strip()
+
+
+def navigation_user(guess: int, special_num: int, tries: int, counter: int) -> None:
+
+    if guess < special_num:
+        print(f"\n The number is bigger than your guess. {tries - counter} tries remaining.")
+
+    elif guess > special_num:
+        print(f"\n The number is smaller than your guess. {tries - counter} tries remaining.")
+
+
+def validating_guess(guess: str, ending_1: int, starting: int) -> bool or None:
+
+    end_flag = end_guess(guess)
+
+    if end_flag:
+        print("\n End of the game! Forced manually!")
+        return None
+
+    elif not guess.isdigit():
+        print("\n Invalid input. Your guess must be an integer!")
+        return False
+
+    elif int(guess) < starting or int(guess) > ending_1:
+        print("\n Invalid input. Guess must be within the chosen range! ")
+        return False
+
+    else:
+        return True
+
+
+def play_game():
+
+    beginning, ending = validating_start_end()
+
+    while True:
+
+        attempts = choosing_difficulty()
+
+        if attempts is None:
+            print("\n Invalid input for choosing mode. End of program!")
+            return
+
+        if not guessing_the_num(start=beginning, end= ending, tries=attempts):
+            return
+
+        play_again = input(f"\n Would you like to play again?\n Answer with 'yes' or 'no': ")
+
+        if no_answer(question=play_again):
+
+            print("\n End of the game. See you soon!")
+            return
+
+        elif not yes_answer(question=play_again):
+
+            print("\n Invalid input! Ending game. ")
+            return
+
+        range_change = input("\n Would you like to change the range?"
+                             "\n Answer with 'yes' or 'no' :")
+
+        if no_answer(question=range_change):
+
+            print(f"\n Ok, continuing with the range({beginning} - {ending}). ")
+            continue
+
+        elif yes_answer(question=range_change):
+
+            beginning, ending = validating_start_end()
+
+        else:
+            print("\n Invalid input for changing the range. End of game! ")
+            return
+
+
+def guessing_the_num(start: int, end: int, tries: int) -> bool:
+
     special_num = random.randint(start, end)
     counter = 0
 
     while True:
-        guess = (input(f"\n Type in your guess for the number({start} - {end}): "))
+        guess_input = input(f"\n Type in your guess for the number({start} - {end}): ")
 
-        if not guess.isdigit() and not end_in_guess(guess):
-            print("\n Invalid input. Try again.")
+        is_valid = validating_guess(guess=guess_input, starting=start, ending_1=end)
+
+        if is_valid is None:
+            return False
+
+        elif not is_valid:
             continue
 
-        if end_in_guess(guess):
-            print("\n End of the game!")
-            break
-            
+        guess = int(guess_input)
         counter += 1
-        guess = int(guess)
 
-        if (counter == tries and guess != special_num) or guess == special_num:
-            start_1 = 0
-            end_1 = 0
-            continuing_question = ""
-            second_question = ""
-            range_changed = True
+        if guess == special_num:
 
-            if counter == tries and guess != special_num:
-                continuing_question = input(f"\n Your attempts have finished! The number was {special_num}.\n"
-                                            " Would you like to try again?\n"
-                                            " Enter your answer here('yes' or 'no'): ")
+            print(f"\n Congratulations, you guessed the special number - {special_num}.")
+            return True
 
-            if guess == special_num:
-                print(f"\n Congratulations, you guessed the special number - {special_num}")
-                continuing_question = input(" Would you like to play again?\n"
-                                            " Answer with 'yes' or 'no': ")
+        elif counter == tries:
 
-            if no_in_question(continuing_question):
-                print("\n End of the game. See you soon!")
-                break
+            print(f"\n Your attempts have finished! The number was {special_num}.\n")
+            return True
 
-            elif yes_in_question(continuing_question):
-
-                second_question = input("\n Would you like to change the range?\n"
-                                        " Answer with 'yes' or 'no': ")
-
-                if yes_in_question(second_question):
-                    start_1 = int(input("\n Choose the start of the range for your game(integer): "))
-                    end_1 = int(input("\n Choose the end of the range for your game(integer): "))
-
-                elif no_in_question(second_question):
-                    print(f"\n Ok, continuing with the range({start} - {end})")
-                    range_changed = False
-
-                else:
-                    print("\n Invalid input. End of the game.")
-                    break
-
-                attempts_2 = second_part()
-
-                if attempts_2 is None:
-                    print("\n End of program")
-                    break
-
-                if range_changed:
-                    guessing_the_num(start=start_1, end=end_1, tries=attempts_2)
-                else:
-                    guessing_the_num(start=beginning, end=ending, tries=attempts_2)
-
-            else:
-                print("\n Invalid input!")
-
-            break
-
-        if guess > end or guess < start:
-            print("\n Invalid input. Try again.")
-            continue
-
-        elif guess < special_num:
-            print(f"\n The number is bigger than your guess. {tries - counter} tries remaining.")
-
-        elif guess > special_num:
-            print(f"\n The number is smaller than your guess. {tries - counter} tries remaining.")
+        navigation_user(guess=guess, special_num=special_num, tries=tries, counter=counter)
 
 
-def second_part() -> int or None:
-    mode = int(input("\n Which mode would you like to play?\n"
-                     f" There are currently {modes_available} modes.\n"
-                     " 'Easy - 1'\n"
-                     " 'Normal - 2'\n"
-                     " 'Hard - 3'\n"
-                     " 'Sniper - 4'\n"
-                     " Enter your corresponding number here: "))
+def choosing_difficulty() -> int or None:
+    mode = (input("\n Which mode would you like to play?\n"
+            f" There are currently {modes_available} modes.\n"
+                  " 'Easy - 1'\n"
+                  " 'Normal - 2'\n"
+                  " 'Hard - 3'\n"
+                  " 'Sniper - 4'\n"
+                  " Enter your corresponding number here: "))
 
-    if mode == 1:
+    if not mode.isdecimal():
+        return None
+
+    mode_number = int(mode)
+    if mode_number == 1:
         return 15
-    elif mode == 2:
+    elif mode_number == 2:
         return 10
-    elif mode == 3:
+    elif mode_number == 3:
         return 5
-    elif mode == 4:
+    elif mode_number == 4:
         return 1
     else:
         return None
 
 
-attempts = second_part()
+if __name__ == "__main__":
+    modes_available = 4
 
-if attempts is None:
-    print("\n Invalid input for choosing mode. End of program!")
-else:
-    guessing_the_num(start=beginning, end=ending, tries=attempts)
+    print("\n Type in 'End' instead of a guess if you would like the program to finish manually.")
+
+    print("\n All guesses must be positive integers. Enjoy! ")
+
+    play_game()
+
